@@ -9,17 +9,11 @@ namespace Play.Catalog.Service.Controllers;
 [Route("[controller]")]
 public class WeatherForecastController : ControllerBase
 {
-    private readonly IItemRepository itemRepository;
-    private static readonly string[] Summaries = new[]
-    {
-        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-    };
+    private readonly IRepository<MovieItem> itemRepository;
 
-    private readonly ILogger<WeatherForecastController> _logger;
 
-    public WeatherForecastController(ILogger<WeatherForecastController> logger, IItemRepository _iitemRepository)
+    public WeatherForecastController(IRepository<MovieItem> _iitemRepository)
     {
-        _logger = logger;
         itemRepository = _iitemRepository;
     }
 

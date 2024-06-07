@@ -3,10 +3,12 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace Entities
 {
-    public class MovieItem
+    public class MovieItem : IEntity
     {
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
+        // [BsonId]
+        // [BsonRepresentation(BsonType.ObjectId)]
+        // public string? Id { get; set; }
+
         public string Id { get; set; }
 
         [BsonElement("title")]
@@ -39,7 +41,6 @@ namespace Entities
         [BsonElement("created_all")]
         [BsonRepresentation(BsonType.DateTime)]
         public DateTime CreatedAt { get; set; }
-
     }
 
 
