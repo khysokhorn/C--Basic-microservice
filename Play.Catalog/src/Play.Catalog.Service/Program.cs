@@ -1,44 +1,48 @@
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Model;
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
+using Repository;
+
+ServiceSettings serviceSettings;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-var configuration = builder.Configuration;
 
-// Configure MongoDB settings
-var mongoSettings = configuration.GetSection(nameof(MogoDBSetting)).Get<MogoDBSetting>();
-builder.Services.AddSingleton(mongoSettings);
-
-// Register MongoDB client and database
-builder.Services.AddSingleton(serviceProvider =>
+builder.Services.AddControllers(options =>
 {
-    var mongoClient = new MongoClient(mongoSettings.ConnectionString);
-    return mongoClient.GetDatabase("Movie-Database");
+    options.SuppressAsyncSuffixInActionNames = false;
 });
-
-// Add controllers or other services
-builder.Services.AddControllers();
 
 var app = builder.Build();
 
+// BsonSerializer.RegisterSerializer(new GuidSerializer(MongoDB.Bson.BsonType.String));
+// BsonSerializer.RegisterSerializer(new DateTimeOffsetSerializer(MongoDB.Bson.BsonType.String));
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+serviceSettings = builder.Configuration.GetSection(nameof(ServiceSettings)).Get<ServiceSettings>();
+var mongoSetting = builder.Configuration.GetSection(nameof(MogoDBSetting)).Get<MogoDBSetting>();
+// builder.Services.AddSingleton(serviceSettings);
+// builder.Services.AddSingleton(mongoSetting);
+builder.Services.AddSingleton(serviceProvier =>
+{
+    var mongoClient = new MongoClient(mongoSetting.ConnectionString);
+    return mongoClient.GetDatabase("Movie-Database");
+});
+builder.Services.AddSwaggerGen();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSingleton<IItemRepository, ItemRepository>();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseDeveloperExceptionPage();
-}
-else
-{
-    app.UseExceptionHandler("/Home/Error");
-    app.UseHsts();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles();
-app.UseRouting();
+
 app.UseAuthorization();
+
 app.MapControllers();
 
 app.Run();
