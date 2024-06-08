@@ -1,7 +1,8 @@
+using System.Linq.Expressions;
 using Entities;
 using MongoDB.Driver;
 
-namespace Repository
+namespace Commom.Repository
 {
     public class MongoRepository<T> : IRepository<T> where T : IEntity
     {
@@ -47,5 +48,17 @@ namespace Repository
             await dbCollection.ReplaceOneAsync(filter, movie);
         }
 
+        public async Task<IReadOnlyCollection<T>> GetAllAsync(Expression<Func<T, bool>> filter, int page, int pageSize)
+        {
+            return await dbCollection.Find(filter)
+            .Skip((page - 1) * pageSize)
+            .Limit(pageSize)
+            .ToListAsync();
+        }
+
+        public async Task<T> GetAsync(Expression<Func<T, bool>> filter)
+        {
+            return await dbCollection.Find(filter).FirstOrDefaultAsync();
+        }
     }
 }

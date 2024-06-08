@@ -1,10 +1,12 @@
 using Entities;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Model;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
 
-namespace Repository
+namespace Commom.Repository
 {
     public static class Extentions
     {

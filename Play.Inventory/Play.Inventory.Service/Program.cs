@@ -1,20 +1,17 @@
 using Commom.Repository;
-using Entities;
+using ModelInventory;
+
 var builder = WebApplication.CreateBuilder(args);
 
-
-builder.Services.AddControllers(options =>
-{
-    options.SuppressAsyncSuffixInActionNames = false;
-});
-
+// Add services to the container.
 builder.Services.AddMongo()
-.AddMongoRepository<MovieItem>("movie");
-
-builder.Services.AddSwaggerGen();
+.AddMongoRepository<InventoryItems>("Users");
+builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
