@@ -1,4 +1,6 @@
+using System.Reflection;
 using Entities;
+using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Model;
@@ -10,6 +12,25 @@ namespace Commom.Repository
 {
     public static class Extentions
     {
+
+        public static IServiceCollection AddRabbitMQ(this IServiceCollection services)
+        {
+
+            services.AddMassTransit(x =>
+            {
+                x.AddConsumers(Assembly.GetExecutingAssembly());
+                x.UsingRabbitMq((context, confi) =>
+                {
+
+                    var configuration = context.GetService<IConfiguration>();
+                    var rabbitMQSetting = configuration!.GetSection(nameof(RabbitMQSetting)).Get<RabbitMQSetting>();
+                    var serviceSetting = configuration.GetSection(nameof(ServiceSettings)).Get<ServiceSettings>();
+                    confi.Host(rabbitMQSetting!.Host);
+                    confi.ConfigureEndpoints(context, new KebabCaseEndpointNameFormatter(serviceSetting!.ServiceName, false));
+                });
+            });
+            return services;
+        }
         public static IServiceCollection AddMongo(this IServiceCollection services)
         {
             BsonSerializer.RegisterSerializer(new GuidSerializer(MongoDB.Bson.BsonType.String));

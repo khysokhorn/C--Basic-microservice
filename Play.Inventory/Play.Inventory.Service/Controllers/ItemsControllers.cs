@@ -1,7 +1,9 @@
 using Commom.Repository;
+using Inventor;
 using Inventor.Extention;
 using Microsoft.AspNetCore.Mvc;
 using ModelInventory;
+using MongoDB.Driver;
 
 namespace Inventory.Controller
 {
@@ -10,20 +12,33 @@ namespace Inventory.Controller
     public class ItemsControllers : ControllerBase
     {
         private readonly IRepository<InventoryItems> repository;
-        public ItemsControllers(IRepository<InventoryItems> repository)
+        private readonly CatelogClient catelogClient;
+        public ItemsControllers(IRepository<InventoryItems> repository, CatelogClient catelogClient)
         {
             this.repository = repository;
+            this.catelogClient = catelogClient;
         }
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<InventoryItemDTO>>> GetAsync(Guid UserID)
+        public async Task<ActionResult<IEnumerable<InventoryItemDTO>>> GetAsync(Guid? UserID)
         {
-            if (UserID == Guid.Empty)
-            {
-                return BadRequest();
-            }
-            var items = (await repository.GetAllAsync(item => item.UserID == UserID, 1, 20))
-            .Select(item => item.asDto());
-            return Ok(items);
+            var items = await catelogClient.GetcatelogItemsAsync();
+            var userMovieCountEntities = await repository.GetAllAsync(item => item.UserID == UserID, 1, 20);
+            var a = items.Single(s => s.ID == "/movie/watch-nowhere-online-100843");
+            var inventoryItemDTO = userMovieCountEntities?.Select(initem =>
+                {
+                    CatelogItemsDto? catelogItems;
+                    try
+                    {
+                        catelogItems = items?.Single(c => c?.ID == initem?.CatelogItem);
+                    }
+                    catch (System.Exception)
+                    {
+                        catelogItems = null;
+                    }
+                    return initem?.asDto(catelogItems?.Imdb, catelogItems?.Year, catelogItems?.Quality);
+                }
+            );
+            return Ok(inventoryItemDTO);
         }
 
         [HttpPost]
@@ -39,12 +54,14 @@ namespace Inventory.Controller
                     UserID = gratItemDto.userID,
                     Quntity = gratItemDto.Quntity,
                     AcquireDate = DateTimeOffset.UtcNow,
+                    Id = Guid.NewGuid().ToString()
                 };
                 await repository.CreateAsync(inventoryItem);
             }
             else
             {
                 inventoryItem.Quntity += gratItemDto.Quntity;
+
                 await repository.UpdateAsync(inventoryItem);
             }
             return Ok();

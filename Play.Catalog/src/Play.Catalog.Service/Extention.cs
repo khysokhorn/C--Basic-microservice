@@ -6,7 +6,7 @@ namespace Entities
     {
         public static MovieItemDTO AsDto(this MovieItem item)
         {
-            return new MovieItemDTO(id: Guid.NewGuid(), name: item.Title);
+            return new MovieItemDTO(id: item.Id, name: item.Title, Imdb: item.Imdb);
         }
     }
 }

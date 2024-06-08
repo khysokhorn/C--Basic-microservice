@@ -4,7 +4,7 @@
   <ImplicitUsings>enable</ImplicitUsings>
   <Nullable>enable</Nullable>
   <PackageId>PLayCommom</PackageId> 
-  <Version>1.0.0</Version> 
+  <Version>1.0.1.2</Version> 
   </PropertyGroup>
   <ItemGroup>
 
@@ -12,6 +12,9 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
     <PackageReference Include="Mongodb.Driver" Version="2.25.0" />
+    <PackageReference Include="MassTransit.AspNetCore" Version="7.3.1" />
+    <PackageReference Include="MassTransit.RabbitMQ" Version="8.2.2" />
+ 
   </ItemGroup>
 
 </Project>

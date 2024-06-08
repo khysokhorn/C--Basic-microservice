@@ -7,8 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="PLayCommom" Version="1.0.0" />
+    <PackageReference Include="PLayCommom" Version="1.0.1.2" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Play.Contract\Play.Contracts\Play.Contracts.csproj" />
   </ItemGroup>
 
 </Project>
