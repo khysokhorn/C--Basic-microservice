@@ -60,5 +60,11 @@ namespace Commom.Repository
         {
             return await dbCollection.Find(filter).FirstOrDefaultAsync();
         }
+
+        public async Task RemoveAsync(string Id)
+        {
+            FilterDefinition<T> filter = filterBuilder.Eq(e => e.Id, Id);
+            await dbCollection.DeleteOneAsync(filter);
+        }
     }
 }

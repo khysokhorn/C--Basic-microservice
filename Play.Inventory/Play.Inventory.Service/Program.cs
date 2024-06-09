@@ -4,6 +4,9 @@ using ModelInventory;
 using Microsoft.Extensions.DependencyInjection;
 using Polly;
 using Polly.Timeout;
+using MassTransit;
+using System.Reflection;
+using Model;
 
 var builder = WebApplication.CreateBuilder(args);
 var timeoutPolicy = Policy.TimeoutAsync<HttpResponseMessage>(TimeSpan.FromSeconds(1));
@@ -38,8 +41,13 @@ builder.Services.AddHttpClient<CatelogClient>(client =>
 ))
 .AddPolicyHandler(timeoutPolicy);
 
+
+
 builder.Services.AddMongo()
-.AddMongoRepository<InventoryItems>("Users");
+.AddMongoRepository<InventoryItems>("Users")
+.AddMongoRepository<CatalogItem>("catelogItems")
+.AddRabbitMQ();
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

@@ -9,6 +9,7 @@ namespace Commom.Repository
         public Task<IReadOnlyCollection<T>> GetAllAsync(Expression<Func<T, bool>> filter, int page, int pageSize);
 
         public Task<T> GetAsync(string Id);
+        public Task RemoveAsync(string Id);
         public Task<T> GetAsync(Expression<Func<T, bool>> filter);
 
         public Task CreateAsync(T data);

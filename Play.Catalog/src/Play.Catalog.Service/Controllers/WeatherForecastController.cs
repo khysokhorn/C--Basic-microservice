@@ -1,3 +1,4 @@
+using System.Reflection;
 using Commom.Repository;
 using Entities;
 using Microsoft.AspNetCore.Mvc;
@@ -37,7 +38,7 @@ public class WeatherForecastController : ControllerBase
         var catelog = new CatelogItemCreated(
             ID: item.Id, Name: item.Title, Description: "Description"
         );
-        await publishEndpoint.Publish(catelog);
+        await publishEndpoint.Publish<CatelogItemCreated>(catelog);
         return Ok();
     }
 
@@ -51,9 +52,10 @@ public class WeatherForecastController : ControllerBase
         var catelog = new CatelogItemUpdated(
             ID: existingItems.Id, Name: existingItems.Title, Description: "Description"
         );
+        
         await publishEndpoint.Publish(catelog);
         return Ok();
     }
-
-
 }
+
+
